@@ -1,0 +1,5 @@
+classes = 14
+train  = training.txt 
+valid  = validation.txt 
+names = names.txt
+backup = backup 
