@@ -4,7 +4,7 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 
 dst_crs = 'EPSG:4326'
 
-with rasterio.open('subset.tif') as src:
+with rasterio.open('scratch/subset.tif') as src:
     transform, width, height = calculate_default_transform(
         src.crs, dst_crs, src.width, src.height, *src.bounds)
     kwargs = src.meta.copy()
@@ -15,7 +15,7 @@ with rasterio.open('subset.tif') as src:
         'height': height
     })
 
-    with rasterio.open('subset_reprojected.tif', 'w', **kwargs) as dst:
+    with rasterio.open('scratch/subset_reprojected.tif', 'w', **kwargs) as dst:
         for i in range(1, src.count + 1):
             destination, dst_transform = reproject(
                 source=rasterio.band(src, i),

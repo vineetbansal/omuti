@@ -1,0 +1,15 @@
+name: 'omuti'
+
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+  - cartopy
+  - gdal
+  - poppler
+  - tensorflow-gpu
+  - pip
+  - python=3.9
+  - pip:
+    - .

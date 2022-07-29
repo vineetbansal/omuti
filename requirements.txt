@@ -1,0 +1,5 @@
+cartopy
+folium
+geopandas
+rasterio
+scikit-learn

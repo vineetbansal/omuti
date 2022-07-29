@@ -1,15 +1,13 @@
 import os.path
 import warnings
+import numpy as np
 import fiona
 import geopandas
 import rasterio
 import rasterio.plot
 from rasterio.windows import Window
 import matplotlib.pyplot as plt
-
-
-GDB = '/data/projects/kreike/data/KreikeSampleExtractedDataNam52022.gdb/'
-TIFF = '/data/projects/kreike/data/Aerial1970_May12_2021_secondGCPsTest.tif'
+from omuti import GDB, TIFF
 
 
 def subset(input_tif, output_tif, gdf, band_index=1):
@@ -22,11 +20,16 @@ def subset(input_tif, output_tif, gdf, band_index=1):
         _col_off2, _row_off2 = ~raster.transform * (_maxx, _maxy)
         _width, _height = _col_off2-_col_off1, _row_off1-_row_off2
 
+        col_offset = np.random.randint(0, int(raster.width))
+        row_offset = np.random.randint(0, int(raster.height))
+
+        width, height = 600, 400
+
         window = Window(
-            _col_off1,
-            _row_off2,
-            _width,
-            _height
+            float(_col_off1+_width+1000),
+            float(_row_off2+_height+1000),
+            float(width),
+            float(height)
         )
 
         band = raster.read(
@@ -70,10 +73,11 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(nrows=1, ncols=1, sharey='all', sharex='all')
     ax.ticklabel_format(useOffset=False, style='plain')
 
-    subset(TIFF, 'subset.tif', gdf)
-    with rasterio.open('subset.tif', 'r') as raster:
-        rasterio.plot.show(raster, with_bounds=True, ax=ax)
+    subset_tiff = 'scratch/subset_random.tif'
+    subset(TIFF, subset_tiff, gdf)
+    with rasterio.open(subset_tiff, 'r') as raster:
+        rasterio.plot.show(raster, with_bounds=True, ax=ax, cmap='gray')
         #roi.plot(ax=ax, color='lightgrey', edgecolor=None)
-        gdf.plot(ax=ax, color='blue')
+        #gdf.plot(ax=ax, color='blue')
 
     plt.show()

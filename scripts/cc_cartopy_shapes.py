@@ -3,7 +3,7 @@ import cartopy.io.shapereader as shpreader
 import matplotlib.pyplot as plt
 
 # Downloaded from gadm.org
-fname = 'data/gadm40_FRA_shp/gadm40_FRA_0.shp'
+fname = '../data/gadm41_FRA/gadm41_FRA_0.shp'
 
 x = shpreader.Reader(fname)  # FionaReader
 adm1_shapes = list(x.geometries())  # list of MultiPolygon objects

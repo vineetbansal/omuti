@@ -2,7 +2,7 @@ import folium
 from PIL import Image
 import io, base64
 
-img = Image.open('subset_reprojected.tif')
+img = Image.open('scratch/subset_reprojected.tif')
 
 m = folium.Map([37, 0], zoom_start=1)
 
@@ -23,4 +23,4 @@ folium.raster_layers.ImageOverlay(
 
 folium.LayerControl().add_to(m)
 
-m.save('map.html')
+m.save('scratch/map.html')

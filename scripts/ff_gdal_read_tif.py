@@ -1,12 +1,10 @@
 from osgeo import gdal
 import matplotlib.pyplot as plt
+from omuti import GDB, TIFF
 
-
-filepath = '/data/projects/kreike/data/Aerial1970_clipped.tif'
-#filepath = '/data/testbed/yoltv4/darknet/rareplanes/real/train/PAN/99_104001001A4EEC00.tif'
 
 if __name__ == '__main__':
-    dataset = gdal.Open(filepath, gdal.GA_ReadOnly)
+    dataset = gdal.Open(TIFF, gdal.GA_ReadOnly)
     print("Driver: {}/{}".format(dataset.GetDriver().ShortName,
                                 dataset.GetDriver().LongName))
     print("Size is {} x {} x {}".format(dataset.RasterXSize,
@@ -33,7 +31,8 @@ if __name__ == '__main__':
     if band.GetRasterColorTable():
         print("Band has a color table with {} entries".format(band.GetRasterColorTable().GetCount()))
 
-    im = band.ReadAsArray()
+    # The original TIFF is huge - only extract a small window for demonstration
+    im = band.ReadAsArray(win_xsize=500, win_ysize=400)
     print(im.shape)
 
     x = im

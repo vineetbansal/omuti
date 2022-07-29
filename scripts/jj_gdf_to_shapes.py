@@ -6,9 +6,8 @@ from folium import plugins
 import rasterio
 import rasterio.features
 from PIL import Image
+from omuti import GDB, TIFF
 
-
-GDB = '/data/projects/kreike/data/KreikeSampleExtractedDataNam52022.gdb/'
 
 if __name__ == '__main__':
 
@@ -32,11 +31,11 @@ if __name__ == '__main__':
     geo_j2 = folium.GeoJson(data=geo_json2, style_function=lambda x: {'fillColor': 'orange'})
 
     raster_bounds = None
-    with rasterio.open('subset_reprojected.tif') as raster:
+    with rasterio.open('scratch/subset_reprojected.tif') as raster:
         b = raster.bounds  # left, bottom, right, top
         raster_bounds = [[b[1], b[0]], [b[3], b[2]]]  # [[lat_min, lon_min], [lat_max, lon_max]]
 
-    img = Image.open('subset_reprojected.tif')
+    img = Image.open('scratch/subset_reprojected.tif')
     b = io.BytesIO()
     img.save(b, format='PNG')
     b64 = base64.b64encode(b.getvalue())
@@ -56,4 +55,4 @@ if __name__ == '__main__':
     overlay.add_to(map)
     folium.LayerControl().add_to(map)
 
-    map.save('map.html')
+    map.save('scratch/map.html')

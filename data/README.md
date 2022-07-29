@@ -4,6 +4,9 @@ Download the whole world data as a single .gpkg file from:
 
 https://geodata.ucdavis.edu/gadm/gadm4.1/gadm_410-gpkg.zip
 
+France .shp file (and other files needed by a shapefile)
+https://gadm.org/download_country.html
+
 .tfw file
 The X and Y pixel size, rotational information, and the world coordinates for the top-left corner of the TIF image.
 

@@ -4,7 +4,7 @@ import tensorflow as tf
 
 if __name__ == '__main__':
 
-    with tf.io.TFRecordWriter('example.tfrecords') as writer:
+    with tf.io.TFRecordWriter('scratch/example.tfrecords') as writer:
       for _ in range(4):
         x, y = np.random.random(), np.random.random()
 
@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
         writer.write(o.SerializeToString())
 
-    dataset = tf.data.TFRecordDataset(['example.tfrecords'])
+    dataset = tf.data.TFRecordDataset(['scratch/example.tfrecords'])
     for raw_record in dataset.take(10):
       o = tf.train.Example()
       o.ParseFromString(raw_record.numpy())
