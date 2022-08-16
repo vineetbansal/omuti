@@ -23,7 +23,7 @@ def subset(input_tif, output_tif, gdf, band_index=1):
         col_offset = np.random.randint(0, int(raster.width))
         row_offset = np.random.randint(0, int(raster.height))
 
-        width, height = 600, 400
+        width, height = 6000, 4000
 
         window = Window(
             float(_col_off1+_width+1000),

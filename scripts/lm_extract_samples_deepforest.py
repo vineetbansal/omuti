@@ -7,23 +7,24 @@ from PIL import Image
 from omuti import GDB, TIFF
 
 
-OUTPUT_DIR = '../data/yolo'
+OUTPUT_DIR = '../data/deepforest'
 CLASSES = ['FarmBoundary1972', 'BigTree1972', 'Omuti1972', 'waterhole1972', 'FarmBoundary1943', 'BigTree1943',
            'waterhole1943', 'Cattlekraal1943', 'Cattlekraal1972', 'Omuti1943', 'OldOmuti', 'OldOmuti1943',
            'OldOmuti1972', 'Field1943']
 CLASSES = ['Omuti1972']  # layer names in the gdb file that we wish to extract
+PADDING = 200
 
-YoloBbox = namedtuple('YoloBbox', ['x_center', 'y_center', 'width', 'height'])
-
+YoloBbox = namedtuple('YoloBbox', ['x_center', 'y_center', 'width', 'height'])   # All relative to image, [0, 1]
+DeepForestBbox = namedtuple('DeepForestBbos', ['xmin', 'ymin', 'xmax', 'ymax'])  # pixel offsets from top left
 
 if __name__ == '__main__':
 
+    header = 'image_path,xmin,ymin,xmax,ymax,label\n'
     os.makedirs(OUTPUT_DIR, exist_ok=True)
+    f = open(f'{OUTPUT_DIR}/all.csv', 'w')
+    f.write(header)
 
     all_images = []
-
-    with open(f'{OUTPUT_DIR}/names.txt', 'w') as f:
-        f.writelines([f'{k}\n' for k in CLASSES])
 
     for class_id, class_name in enumerate(CLASSES):
 
@@ -36,7 +37,7 @@ if __name__ == '__main__':
 
         # For each shape found in the layer
         for i, shape in series.iteritems():
-            out_image, out_transform = rasterio.mask.mask(raster, shape, pad=True, pad_width=200, crop=True, filled=False)
+            out_image, out_transform = rasterio.mask.mask(raster, shape, pad=True, pad_width=PADDING, crop=True, filled=False)
             im = Image.fromarray(out_image.squeeze(0))
             image_basename = f'{i:04d}'
             image_path = os.path.abspath(f'{OUTPUT_DIR}/{class_name}/{image_basename}.png')
@@ -51,18 +52,22 @@ if __name__ == '__main__':
             _width, _height = _col_off2 - _col_off1, _row_off1 - _row_off2
 
             # By using rasterio.mask.mask with a padding, we know that the shape is centered w.r.t the image
-            # Yolo expects all values in the bounding box to be specified as the fraction of the total image
-            # in the following order, so that all values lie between 0 and 1
-            #    class_id, x_center, y_center, width, height
-            bbox = YoloBbox(x_center=0.5, y_center=0.5, width=_width/im.width, height=_height/im.height)
+            xmin = (im.width - _width) / 2.0
+            xmax = (im.width + _width) / 2.0
+            ymin = (im.height - _height) / 2.0
+            ymax = (im.height + _height) / 2.0
+            bbox = DeepForestBbox(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
 
-            with open(f'{OUTPUT_DIR}/{class_name}/{image_basename}.txt', 'w') as f:
-                f.write(f'{class_id} {bbox.x_center} {bbox.y_center} {bbox.width} {bbox.height}\n')
+            f.write(f'{image_path},{bbox.xmin},{bbox.ymin},{bbox.xmax},{bbox.ymax},{class_name}\n')
 
         raster.close()
+    f.close()
 
-        training, validation = train_test_split(all_images)
-        with open(f'{OUTPUT_DIR}/training.txt', 'w') as f:
-            f.writelines([f'{img}\n' for img in training])
-        with open(f'{OUTPUT_DIR}/validation.txt', 'w') as f:
-            f.writelines([f'{img}\n' for img in validation])
+    all_lines = open(f'{OUTPUT_DIR}/all.csv', 'r').readlines()[1:]  # skip header!
+    training, validation = train_test_split(all_lines)
+    with open(f'{OUTPUT_DIR}/training.csv', 'w') as f:
+        f.write(header)
+        f.writelines([f'{line}' for line in training])
+    with open(f'{OUTPUT_DIR}/validation.csv', 'w') as f:
+        f.write(header)
+        f.writelines([f'{line}' for line in validation])

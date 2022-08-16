@@ -69,4 +69,14 @@ where all of the above are relative to the width/height of the image, so all bet
 
 6 is bus (https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/)
 
-./darknet detector train kreike/kreike.data kreike/kreike.cfg weights/yolov4.conv.137
+Training
+---------
+
+./darknet detector train /data/omuti/darknet/omuti.data /data/omuti/darknet/omuti.cfg weights/yolov4.conv.137
+
+Detection
+---------
+
+./darknet detector test /data/omuti/darknet/omuti.data /data/omuti/darknet/omuti.cfg /data/omuti/darknet/omuti_final.weights /data/omuti/data/yolo/Omuti1972/0000.png --thresh 0.1
+
+./darknet detector test /data/omuti/darknet/omuti.data /data/omuti/darknet/omuti.cfg /data/omuti/darknet/omuti_final.weights /data/omuti/scripts/scratch/subset_random_reprojected.png --thresh 0.1

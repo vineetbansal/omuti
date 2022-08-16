@@ -1,3 +1,4 @@
+import numpy as np
 from osgeo import gdal
 import matplotlib.pyplot as plt
 from omuti import GDB, TIFF
@@ -32,11 +33,11 @@ if __name__ == '__main__':
         print("Band has a color table with {} entries".format(band.GetRasterColorTable().GetCount()))
 
     # The original TIFF is huge - only extract a small window for demonstration
-    im = band.ReadAsArray(win_xsize=500, win_ysize=400)
+    im = band.ReadAsArray(win_xsize=2000, win_ysize=400)
     print(im.shape)
 
     x = im
     print(x.shape)
 
-    plt.imshow(x)
+    plt.imshow(x, cmap='gray')
     plt.show()
