@@ -1,5 +1,7 @@
-__version__ = '0.0.1'
+# The _version.py file is managed by setuptools-scm
+#   and is not in version control.
+from ._version import version as __version__
 
-GDB = '/data/omuti/data/kreike/KreikeSampleExtractedDataNam52022.gdb/'
-TIFF = '/data/omuti/data/kreike/Aerial1970_May12_2021_secondGCPsTest.tif'
-TIFF_CLIPPED = '/data/omuti/data/kreike/Aerial1970_clipped.tif'
+
+GDB = '/media/vineetb/DELTA/omuti_data/KreikeSampleExtractedDataNam52022.gdb/'
+TIFF = '/media/vineetb/DELTA/omuti_data/Aerial1970_May12_2021_secondGCPsTest.tif'

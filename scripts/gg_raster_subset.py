@@ -2,6 +2,7 @@ import os.path
 import warnings
 import fiona
 import geopandas
+import numpy as np
 import rasterio
 import rasterio.plot
 from rasterio.windows import Window
@@ -9,21 +10,29 @@ import matplotlib.pyplot as plt
 from omuti import GDB, TIFF
 
 
-def subset(input_tif, output_tif, gdf, band_index=1):
+def subset(input_tif, output_tif, gdf, band_index=1, random=False, random_h=1000, random_w=5000):
     with rasterio.open(input_tif) as raster:
-        if raster.crs != gdf.crs:
+        if raster.crs.wkt != gdf.crs:
             raise AssertionError
 
         _minx, _miny, _maxx, _maxy = tuple(gdf.total_bounds)
+
+        if random:
+            _minx = np.random.randint(_minx, _maxx - random_w)
+            _maxx = _minx + random_w
+            _miny = np.random.randint(_miny, _maxy - random_h)
+            _maxy = _miny + random_h
+
         _col_off1, _row_off1 = ~raster.transform * (_minx, _miny)
         _col_off2, _row_off2 = ~raster.transform * (_maxx, _maxy)
+
         _width, _height = _col_off2-_col_off1, _row_off1-_row_off2
 
         window = Window(
-            _col_off1,
-            _row_off2,
-            _width,
-            _height
+            float(_col_off1),
+            float(_row_off2),
+            float(_width),
+            float(_height)
         )
 
         band = raster.read(
@@ -69,6 +78,13 @@ if __name__ == '__main__':
 
     subset_tiff = 'scratch/subset.tif'
     subset(TIFF, subset_tiff, gdf)
+    with rasterio.open(subset_tiff, 'r') as raster:
+        rasterio.plot.show(raster, with_bounds=True, ax=ax)
+        #roi.plot(ax=ax, color='lightgrey', edgecolor=None)
+        gdf.plot(ax=ax, color='blue')
+
+    subset_tiff = 'scratch/subset_random.tif'
+    subset(TIFF, subset_tiff, gdf, random=True)
     with rasterio.open(subset_tiff, 'r') as raster:
         rasterio.plot.show(raster, with_bounds=True, ax=ax)
         #roi.plot(ax=ax, color='lightgrey', edgecolor=None)

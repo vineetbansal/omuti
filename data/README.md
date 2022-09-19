@@ -1,3 +1,6 @@
+internal data
+sudo mount -t cifs //lockhart.princeton.edu/AfricaAirPhotos/Kreike /mnt/tmp -o username=vineetb@princeton.edu,uid=$(id -u)
+
 .gpkg file
 Something that geopandas can read - has metadata info and geometry information
 Download the whole world data as a single .gpkg file from:

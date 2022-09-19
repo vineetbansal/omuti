@@ -5,9 +5,10 @@ import geopandas
 import rasterio.mask
 from PIL import Image
 from omuti import GDB, TIFF
+from omuti.utils import convert_3D_2D
 
 
-OUTPUT_DIR = '../data/deepforest'
+OUTPUT_DIR = 'scratch/ml'
 CLASSES = ['FarmBoundary1972', 'BigTree1972', 'Omuti1972', 'waterhole1972', 'FarmBoundary1943', 'BigTree1943',
            'waterhole1943', 'Cattlekraal1943', 'Cattlekraal1972', 'Omuti1943', 'OldOmuti', 'OldOmuti1943',
            'OldOmuti1972', 'Field1943']
@@ -15,7 +16,7 @@ CLASSES = ['Omuti1972']  # layer names in the gdb file that we wish to extract
 PADDING = 200
 
 YoloBbox = namedtuple('YoloBbox', ['x_center', 'y_center', 'width', 'height'])   # All relative to image, [0, 1]
-DeepForestBbox = namedtuple('DeepForestBbos', ['xmin', 'ymin', 'xmax', 'ymax'])  # pixel offsets from top left
+MyBbox = namedtuple('MyBbox', ['xmin', 'ymin', 'xmax', 'ymax'])  # pixel offsets from top left
 
 if __name__ == '__main__':
 
@@ -33,6 +34,7 @@ if __name__ == '__main__':
         os.makedirs(f'{OUTPUT_DIR}/{class_name}', exist_ok=True)
 
         gdf = geopandas.read_file(GDB, layer=class_name).to_crs(epsg=4326)
+        gdf.geometry = convert_3D_2D(gdf.geometry)
         series = gdf['geometry']  # GeoSeries
 
         # For each shape found in the layer
@@ -56,7 +58,7 @@ if __name__ == '__main__':
             xmax = (im.width + _width) / 2.0
             ymin = (im.height - _height) / 2.0
             ymax = (im.height + _height) / 2.0
-            bbox = DeepForestBbox(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
+            bbox = MyBbox(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
 
             f.write(f'{image_path},{bbox.xmin},{bbox.ymin},{bbox.xmax},{bbox.ymax},{class_name}\n')
 
@@ -64,10 +66,14 @@ if __name__ == '__main__':
     f.close()
 
     all_lines = open(f'{OUTPUT_DIR}/all.csv', 'r').readlines()[1:]  # skip header!
-    training, validation = train_test_split(all_lines)
+    training, testing = train_test_split(all_lines, train_size=0.8)
+    training, validation = train_test_split(training, train_size=0.9)
     with open(f'{OUTPUT_DIR}/training.csv', 'w') as f:
         f.write(header)
         f.writelines([f'{line}' for line in training])
     with open(f'{OUTPUT_DIR}/validation.csv', 'w') as f:
         f.write(header)
         f.writelines([f'{line}' for line in validation])
+    with open(f'{OUTPUT_DIR}/testing.csv', 'w') as f:
+        f.write(header)
+        f.writelines([f'{line}' for line in testing])

@@ -7,9 +7,13 @@ channels:
 dependencies:
   - cartopy
   - gdal
+  - jupyterlab
+  - mapclassify
   - poppler
-  - tensorflow-gpu
+  - rasterio
+  - scikit-learn
   - pip
   - python=3.9
   - pip:
-    - .
+    - folium
+    - geopandas
