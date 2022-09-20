@@ -9,7 +9,7 @@ import cv2
 from PIL import Image
 from omuti.torch.main import OmutiModule
 
-TRAINING = False
+TRAINING = True
 
 
 def predict(df, savedir, ground_truth=None):
@@ -42,17 +42,20 @@ def predict(df, savedir, ground_truth=None):
 
 if __name__ == '__main__':
 
+    # TODO: Support multiple features
+    feature_name = 'Omuti1972'
+
     if TRAINING:
 
-        training_file = "scratch/ml/training.csv"
-        validation_file = "scratch/ml/validation.csv"
+        training_file = f'scratch/ml/{feature_name}/training.csv'
+        validation_file = f'scratch/ml/{feature_name}/validation.csv'
 
         model = OmutiModule(training_file=training_file, validation_file=validation_file)
 
         model.model.load_state_dict(
             torch.load('neon.pt', map_location=model.device))
 
-        model.label_dict = {'Omuti1972': 0}
+        model.label_dict = {feature_name: 0}
         model.create_trainer(logger=TensorBoardLogger(save_dir='lightning_logs/'), log_every_n_steps=1)
         model.trainer.fit(model)
 

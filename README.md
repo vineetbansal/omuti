@@ -1,5 +1,8 @@
-iso3166.csv downloaded from
+## Dependencies
 
-    # wikipedia - ISO 3166-1 country codes for each of 249 countries
-    # wikipedia - https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3 (3 letter country codes)
-https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv
+```
+conda create --name omuti python=3.9
+conda activate omuti
+conda env update --file environment.yml
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+```

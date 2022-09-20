@@ -1,5 +1,7 @@
-internal data
-sudo mount -t cifs //lockhart.princeton.edu/AfricaAirPhotos/Kreike /mnt/tmp -o username=vineetb@princeton.edu,uid=$(id -u)
+iso3166.csv downloaded from
+https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv
+# wikipedia - ISO 3166-1 country codes for each of 249 countries
+# wikipedia - https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3 (3 letter country codes)
 
 .gpkg file
 Something that geopandas can read - has metadata info and geometry information

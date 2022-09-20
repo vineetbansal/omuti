@@ -10,8 +10,15 @@ dependencies:
   - poppler
   - rasterio
   - scikit-learn
+  - tqdm
   - pip
   - python=3.9
   - pip:
+    - albumentations
     - folium
-    - geopandas 
+    - geopandas
+    - opencv-python
+    - pytorch-lightning
+    - rtree
+    - slidingwindow
+    - xmltodict

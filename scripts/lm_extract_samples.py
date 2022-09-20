@@ -21,7 +21,6 @@ MyBbox = namedtuple('MyBbox', ['xmin', 'ymin', 'xmax', 'ymax'])  # pixel offsets
 if __name__ == '__main__':
 
     all_layers = fiona.listlayers(GDB)
-    all_layers = all_layers[5:]
     for class_id, class_name in enumerate(all_layers):
 
         output_dir = os.path.join(OUTPUT_DIR, class_name)
@@ -32,7 +31,8 @@ if __name__ == '__main__':
 
         raster = rasterio.open('scratch/subset.tif')
 
-        gdf = geopandas.read_file(GDB, layer=class_name)
+        gdf = geopandas.read_file(GDB, layer=class_name).to_crs(raster.crs)
+
         gdf.geometry = convert_3D_2D(gdf.geometry)
         series = gdf['geometry']  # GeoSeries
 
