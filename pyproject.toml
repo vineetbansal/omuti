@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omuti"
+dynamic = ["version"]
+authors = [
+  { name="Vineet Bansal", email="vineetb@princeton.edu" }
+]
+description = "Aerial Object Detection"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    "torch",
+    "torchvision",
+    "pandas",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vineetbansal/omuti"
+
+[tool.setuptools_scm]
+write_to = "omuti/_version.py"
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["omuti*"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-rA"
+testpaths = [
+    "tests"
+]

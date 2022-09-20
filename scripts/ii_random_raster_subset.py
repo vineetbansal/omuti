@@ -10,26 +10,29 @@ import matplotlib.pyplot as plt
 from omuti import GDB, TIFF
 
 
-def subset(input_tif, output_tif, gdf, band_index=1):
+def subset(input_tif, output_tif, gdf, band_index=1, random=False, random_h=1000, random_w=5000):
     with rasterio.open(input_tif) as raster:
-        if raster.crs != gdf.crs:
+        if raster.crs.wkt != gdf.crs:
             raise AssertionError
 
         _minx, _miny, _maxx, _maxy = tuple(gdf.total_bounds)
+
+        if random:
+            _minx = np.random.randint(_minx, _maxx - random_w)
+            _maxx = _minx + random_w
+            _miny = np.random.randint(_miny, _maxy - random_h)
+            _maxy = _miny + random_h
+
         _col_off1, _row_off1 = ~raster.transform * (_minx, _miny)
         _col_off2, _row_off2 = ~raster.transform * (_maxx, _maxy)
+
         _width, _height = _col_off2-_col_off1, _row_off1-_row_off2
 
-        col_offset = np.random.randint(0, int(raster.width))
-        row_offset = np.random.randint(0, int(raster.height))
-
-        width, height = 6000, 4000
-
         window = Window(
-            float(_col_off1+_width+1000),
-            float(_row_off2+_height+1000),
-            float(width),
-            float(height)
+            float(_col_off1),
+            float(_row_off2),
+            float(_width),
+            float(_height)
         )
 
         band = raster.read(
@@ -74,7 +77,7 @@ if __name__ == '__main__':
     ax.ticklabel_format(useOffset=False, style='plain')
 
     subset_tiff = 'scratch/subset_random.tif'
-    subset(TIFF, subset_tiff, gdf)
+    subset(TIFF, subset_tiff, gdf, random=True)
     with rasterio.open(subset_tiff, 'r') as raster:
         rasterio.plot.show(raster, with_bounds=True, ax=ax, cmap='gray')
         #roi.plot(ax=ax, color='lightgrey', edgecolor=None)
